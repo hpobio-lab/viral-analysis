@@ -13,6 +13,11 @@ To chat with devs, visit the biohackathon slack and see the Workflows channel.
 ### Development
 You'll need Docker installed locally do build dockerfiles, as well as GNU make to use the makefile.
 
+### Public Docker images
+The public docker images used for tools should come from the hpobiolab (or another vetted, public repo) to ensure both security and reliability.
+
+Docker images currently being used are here: [https://hub.docker.com/orgs/hpobiolab/repositories](https://hub.docker.com/orgs/hpobiolab/repositories)
+
 
 ### Running workflows
 WDL requires cromwell to run locally.
