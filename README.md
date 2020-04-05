@@ -8,11 +8,20 @@ particularly tailored to SARS-CoV2 as part of the [COVID-19 Biohackathon](https:
 
 To chat with devs, visit the biohackathon slack and see the Workflows channel.
 
-## Installation
+## Installation / requirements
+
+### Development
+You'll need Docker installed locally do build dockerfiles, as well as GNU make to use the makefile.
+
+
+### Running workflows
+WDL requires cromwell to run locally.
 
 To download cromwell: wget https://github.com/broadinstitute/cromwell/releases/download/49/cromwell-49.jar
+
 To download womtool: wget https://github.com/broadinstitute/cromwell/releases/download/49/womtool-49.jar
 
+To run in the cloud, you can run in Broad's Terra environment or using Google Cloud Project directly. Instructions for doing so will follow shortly.
 
 
 
