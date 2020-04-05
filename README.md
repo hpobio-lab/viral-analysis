@@ -41,6 +41,17 @@ Scope-wise, it's probably best to start with a single workflow that annotates va
 
 ## Pipeline(s)
 
+### Read filtering (in progress)
+
+### Read-to-reference alignment (in progress)
+
+### Variable site detection
+
+### Pangenome generation with minimap2, seqwish, and odgi (in progress)
+
+### Read-to-graph alignment with vg (in progress)
+
+
 ## Examples
 
 ## Building custom Docker images
