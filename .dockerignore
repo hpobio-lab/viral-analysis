@@ -1,0 +1,15 @@
+cromwell/
+dockerfiles/
+workflows/
+data/
+ref/
+*.jar
+*.md
+*.wdl
+*.fa
+*.fasta
+*.fq
+*.GFF
+*.gff
+*.fastq
+*.conf
