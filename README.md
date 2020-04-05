@@ -78,7 +78,10 @@ make push APP=bwa
 The resulting docker image is then pushed to [https://hub.docker.com/repository/docker/hpobiolab/bwa](https://hub.docker.com/repository/docker/hpobiolab/bwa)
 
 ## Reference genomes and annotations
+The `refs` directory contains the SARS-COV2 reference genome (from GenBank / RefSeq) as well
+as the GFF file of genomic features. In addition, a pre-built BWA index set is included for read mapping.
 
 ## Data
+The data directory contains links for downloading raw read data from SRA. Raw reads should not be included in the repo as they tend to break git.
 
 
