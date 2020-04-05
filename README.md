@@ -55,7 +55,10 @@ Scope-wise, it's probably best to start with a single workflow that annotates va
 ## Examples
 
 ## Building custom Docker images
-To build a docker file in the dockerfiles directory, try:
+
+The Makefile provides some shorthand for building/pushing dockerfiles. From the main project directoy,
+a `make build APP=<APPNAME>` will build an app named "APPNAME" from a dockerfile named "APPNAME.Dockerfile."
+
 ```
 make build APP=<dockerfile basename>
 
@@ -65,6 +68,14 @@ make build APP=samtools
 ## To push to a public repo:
 make push APP=samtools
 ```
+
+Here's a concrete example, based on the BWA dockerfile in the dockerfiles directory.
+```
+make build APP=bwa
+make push APP=bwa
+```
+
+The resulting docker image is then pushed to [https://hub.docker.com/repository/docker/hpobiolab/bwa](https://hub.docker.com/repository/docker/hpobiolab/bwa)
 
 ## Reference genomes and annotations
 
