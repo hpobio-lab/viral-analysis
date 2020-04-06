@@ -4,15 +4,16 @@ task minimap2{
   input {
     File readsFA
     Int diskGB
+    Int? threads = 32
     String outbase = basename(basename(basename(readsFA, ".gz"), ".fasta"), ".fa")
   }
   command{
-    minimap2 -cx asm20 -X ${readsFA} ${readsFA} > ${outbase}.paf
+    minimap2 -cx asm20 -w 1 -t ${threads} ${readsFA} ${readsFA} > ${outbase}.paf
   }
   runtime{
     docker : "hpobiolab/minimap2"
     memory : "12GB"
-    cpu : 4
+    cpu : "${threads}"
     disks : "local-disk " + diskGB + " HDD"
     preemptible : 4
   }
@@ -26,15 +27,18 @@ task seqwish{
     File readsFA
     File readsPAF
     Int diskGB
+    Int kmerSize = 16
+    Int threads = 32
     String outbase = basename(readsPAF, ".paf")
   }
   command {
-    seqiwsh -s ${readsFA} -p ${readsPAF} -g ${outbase}.gfa
+    seqwish -t ${threads} -k ${kmerSize} -s ${readsFA} -p ${readsPAF} -g ${outbase}.gfa
   }
   runtime {
     docker : "hpobiolab/seqwish"
     memory : "12GB"
-    cpu : 4
+    cpu : "${threads}"
+    disks : "local-disk " + diskGB + " HDD"
     preemptible : 4
   }
   output{
@@ -50,11 +54,13 @@ task odgiBuild{
     String outbase = basename(inputGFA, ".gfa")
   }
   command {
-    odgi build -g ${inputGFA} -s -o ${outbase}.odgi
+    odgi build -g ${inputGFA} -s -o - | \
+    odgi sort -i - -p s -o ${outbase}.odgi
   }
   runtime {
     docker : "hpobiolab/odgi"
     memory : "32GB"
+    disks : "local-disk " + diskGB + " HDD"
     cpu : 4
     preemptible : 3
   }
@@ -70,12 +76,13 @@ task odgiViz{
     String outbase = basename(inputODGI, ".odgi")
   }
   command {
-    odgi viz -i ${inputODGI} -o ${outbase}.png -x 4000 -y 500 -R -P 5
+    odgi viz -i ${inputODGI} -o ${outbase}.png -x 50000 -y 500 -R -P 4 -R
   }
   runtime {
     docker : "hpobiolab/odgi"
     memory : "10GB"
     cpu : 2
+    disks : "local-disk " + diskGB + " HDD"
     preemptible : 2
   }
   output{
@@ -100,7 +107,8 @@ workflow PangenomeGenerate{
   call seqwish as induceGraph{
     input:
       readsFA=inputReads,
-      readsPAF=overlapReads.readsPAF
+      readsPAF=overlapReads.readsPAF,
+      diskGB=induceGB
   }
 
   Int buildGB = ceil(size(induceGraph.seqwishGFA, "GB") * 2)
