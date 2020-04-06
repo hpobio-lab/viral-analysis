@@ -32,7 +32,7 @@ task seqwish{
     String outbase = basename(readsPAF, ".paf")
   }
   command {
-    seqiwsh -t ${threads} -k ${kmerSize} -s ${readsFA} -p ${readsPAF} -g ${outbase}.gfa
+    seqwish -t ${threads} -k ${kmerSize} -s ${readsFA} -p ${readsPAF} -g ${outbase}.gfa
   }
   runtime {
     docker : "hpobiolab/seqwish"
