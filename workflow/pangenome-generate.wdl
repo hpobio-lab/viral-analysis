@@ -4,7 +4,7 @@ task minimap2{
   input {
     File readsFA
     Int diskGB
-    Int? threads = 32
+    Int? threads = 64
     String outbase = basename(basename(basename(readsFA, ".gz"), ".fasta"), ".fa")
   }
   command{
@@ -28,7 +28,7 @@ task seqwish{
     File readsPAF
     Int diskGB
     Int kmerSize = 16
-    Int threads = 32
+    Int threads = 64
     String outbase = basename(readsPAF, ".paf")
   }
   command {
