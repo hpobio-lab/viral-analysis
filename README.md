@@ -61,7 +61,7 @@ For a FASTA file of sequences named "seqs.fa" in the current directory,
 your file would look like so:
 ```
 {
-   inputReads="seqs.fa"
+   PangenomeGenerate.inputReads="seqs.fa"
 }
 ```
 
