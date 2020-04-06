@@ -73,8 +73,72 @@ java -jar cromwell/cromwell-49.jar run -i inputs.json workflow/pangenome-generat
 
 
 If you're running in the cloud,
-you'll want to set up a google cloud project / billing account and fill in the missing fields in the
-EXAMPLE conf file. You'll also need to copy your input reads to your cromwell google cloud bucket, and rather than use the file name in the inputs.json, put the absolute path in your cromwell bucket (e.g., "gs://cromwell-cloud-dir/data/seqs.fa").
+you'll want to set up a google cloud project / billing account
+and fill in the missing fields in the
+EXAMPLE conf file. Steps roughly outlined below:
+1. Open EXAMPLE.CROMWELL.PAPI.conf in your favorite text editor
+2. Replace the `<your-google-project-here>` placeholders (there should be three):
+```
+.
+.
+.
+engine {
+  filesystems {
+    gcs {
+      auth = "application-default"
+      project = "<YOUR PROJECT ID HERE>"
+    }
+  }
+}
+.
+.
+.
+config {
+        // Google project
+        project = "<YOUR PROJECT ID HERE>"
+
+        // Base bucket for workflow executions
+.
+.
+.
+filesystems {
+          gcs {
+            // A reference to a potentially different auth for manipulating files via engine functions.
+            auth = "application-default"
+            project = "<YOUR PROJECT ID HERE>"
+          }
+        }
+.
+.
+.
+```
+3. Replace the Google bucket ID place holder with your google bucket name:
+```
+.
+.
+.
+      project = "<YOUR PROJECT ID HERE>"
+
+        // Base bucket for workflow executions
+        root = "gs://<YOUR GOOGLE STORAGE BUCKET NAME HERE>/cromwell-execution"
+.
+.
+.
+```
+
+
+Next, you'll also need to copy your input reads to your cromwell google cloud bucket:
+```
+gsutil cp seqs.fa gs://<your-google-bucket>/
+```
+
+and rather than use the file name in the inputs.json,
+put the absolute path in your cromwell bucket:
+```
+{
+    PangenomeGenerate.inputReads="gs://<your-google-bucket>/seqs.fa"
+}
+```
 
 Once you've done that, you can run like so:
 
