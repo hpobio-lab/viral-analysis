@@ -48,6 +48,42 @@ Scope-wise, it's probably best to start with a single workflow that annotates va
 ### Variable site detection
 
 ### Pangenome generation with minimap2, seqwish, and odgi (in progress)
+We've wrapped the commands to build the odgi-based SARS-CoV2 pangenome and
+visualization, described [here](https://github.com/virtual-biohackathons/covid-19-bh20/wiki/Pangenome), into a WDL description that can be run via Cromwell.
+
+If you have docker installed locally, the workflow should run after pulling the proper images
+(all built from dockerfiles in the `dockerfiles` directory).
+
+To run locally, you'll need to make sure Cromwell is downloaded. There's a directory for this but we don't include it in the repo as the JAR file is rather large.
+
+Next, you'll need to create an `inputs.json` file that tells cromwell where your reads are.
+For a FASTA file of sequences named "seqs.fa" in the current directory,
+your file would look like so:
+```
+{
+   inputReads="seqs.fa"
+}
+```
+
+Save this file as `inputs.json`. Then, you can run cromwell locally like so:  
+
+```
+java -jar cromwell/cromwell-49.jar run -i inputs.json workflow/pangenome-generate.wdl
+```
+
+
+If you're running in the cloud,
+you'll want to set up a google cloud project / billing account and fill in the missing fields in the
+EXAMPLE conf file. You'll also need to copy your input reads to your cromwell google cloud bucket, and rather than use the file name in the inputs.json, put the absolute path in your cromwell bucket (e.g., "gs://cromwell-cloud-dir/data/seqs.fa").
+
+Once you've done that, you can run like so:
+
+```
+java -Dconfig.file=cromwell/EXAMPLE.CROMWELL.PAPI.conf -jar cromwell.jar -i inputs.json workflow/pangenome-generate.wdl
+```
+
+Cromwell will run in the foreground and report status to the terminal. When it's done, you should recieve a "Success" message, and your files will be in your google bucket.
+
 
 ### Read-to-graph alignment with vg (in progress)
 
