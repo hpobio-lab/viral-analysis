@@ -14,6 +14,10 @@ To chat with devs, visit the biohackathon slack and see the Workflows channel.
 You'll need Docker installed locally do build dockerfiles, as well as GNU make to use the makefile.
 
 ### Public Docker images
+If you would like an additional Docker image, please first check [if it is in the Biocontainers registry](https://biocontainers.pro/#/registry).
+If it's not, it may be in the `hpobiolab` dockerhub. All tools in the `dockerfiles` directory are available via `docker pull hpobiolab/<toolname>`, for
+example.
+
 The public docker images used for tools should come from the hpobiolab (or another vetted, public repo) to ensure both security and reliability.
 
 Docker images currently being used are here: [https://hub.docker.com/orgs/hpobiolab/repositories](https://hub.docker.com/orgs/hpobiolab/repositories)
@@ -28,6 +32,7 @@ To download womtool: wget https://github.com/broadinstitute/cromwell/releases/do
 
 To run in the cloud, you can run in Broad's Terra environment or using Google Cloud Project directly. Instructions for doing so will follow shortly.
 
+To run Nextflow pipelines, please see the `nextflow` directory.
 
 
 ## Original proposal
