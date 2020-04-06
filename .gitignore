@@ -1,3 +1,4 @@
 *.jar
 .make_tags
 *.gz
+ignore/
