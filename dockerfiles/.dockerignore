@@ -1,0 +1,11 @@
+*.jar
+*.dockerfiles/
+*.md
+*.wdl
+*.fa
+*.fasta
+*.fq
+*.GFF
+*.gff
+*.fastq
+*.conf
