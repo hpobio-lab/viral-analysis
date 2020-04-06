@@ -1,12 +1,13 @@
 #!/usr/bin/env nextflow
 
-params.dir = "${baseDir}/data"
+params.dir = "${baseDir}/../data"
 
 fastaFiles = "${params.dir}/**.fasta"
 sequences = Channel.fromPath(fastaFiles).map { path -> tuple(path.simpleName, path) }
 
 process minimap2 {
   tag { sample }
+  publishDir "$sample", mode: 'copy'
   container "quay.io/biocontainers/minimap2:2.17--h8b12597_1"
 
   input:
@@ -21,6 +22,7 @@ process minimap2 {
 
 process seqwish {
   tag { sample }
+  publishDir "$sample", mode: 'copy'
   container "quay.io/biocontainers/seqwish:0.2.1--h8b12597_0"
 
   input:
@@ -35,6 +37,7 @@ process seqwish {
 
 process odgiBuild {
   tag { sample }
+  publishDir "$sample", mode: 'copy'
   container "quay.io/biocontainers/odgi:v0.3--py37h8b12597_0"
 
   input:
@@ -50,6 +53,7 @@ process odgiBuild {
 
 process odgiViz {
   tag { sample }
+  publishDir "$sample", mode: 'copy'
   container "quay.io/biocontainers/odgi:v0.3--py37h8b12597_0"
 
   input:
