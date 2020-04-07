@@ -1,7 +1,7 @@
 cwlVersion: v1.1
 class: Workflow
 inputs:
-  inputReads: File
+  inputReads: File[]
 outputs:
   odgiGraph:
     type: File
@@ -9,14 +9,21 @@ outputs:
   odgiPNG:
     type: File
     outputSource: vizGraph/odgiPNG
+  seqwishGFA:
+    type: File
+    outputSource: induceGraph/seqwishGFA
 steps:
-  overlapReads:
+  dedup:
     in: {readsFA: inputReads}
+    out: [readsMergeDedup]
+    run: seqkit-rmdup.cwl
+  overlapReads:
+    in: {readsFA: dedup/readsMergeDedup}
     out: [readsPAF]
     run: minimap2.cwl
   induceGraph:
     in:
-      readsFA: inputReads
+      readsFA: dedup/readsMergeDedup
       readsPAF: overlapReads/readsPAF
     out: [seqwishGFA]
     run: seqwish.cwl
