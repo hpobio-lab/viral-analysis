@@ -5,13 +5,27 @@ params.dir = "${baseDir}/../data"
 fastaFiles = "${params.dir}/**.fasta"
 sequences = Channel.fromPath(fastaFiles).map { path -> tuple(path.simpleName, path) }
 
-process minimap2 {
+process dedup {
+  tag { sample }
+  container "quay.io/biocontainers/seqkit:0.7.1--0"
+
+  input:
+    set sample, file(fasta) from sequences
+  output:
+    set sample, file("${sample}.dedup.fasta") into dedup
+
+  """
+  seqkit rmdup --by-seq --ignore-case -o ${sample}.dedup.fasta $fasta
+  """
+}
+
+process overlapReads {
   tag { sample }
   publishDir "$sample", mode: 'copy'
   container "quay.io/biocontainers/minimap2:2.17--h8b12597_1"
 
   input:
-    set sample, file(fasta) from sequences
+    set sample, file(fasta) from dedup
   output:
     set sample, file(fasta), file("${sample}.paf") into alignments
 
@@ -20,7 +34,7 @@ process minimap2 {
   """
 }
 
-process seqwish {
+process induceGraph {
   tag { sample }
   publishDir "$sample", mode: 'copy'
   container "quay.io/biocontainers/seqwish:0.2.1--h8b12597_0"
@@ -35,7 +49,7 @@ process seqwish {
   """
 }
 
-process odgiBuild {
+process buildGraph {
   tag { sample }
   publishDir "$sample", mode: 'copy'
   container "quay.io/biocontainers/odgi:v0.3--py37h8b12597_0"
@@ -51,7 +65,7 @@ process odgiBuild {
   """
 }
 
-process odgiViz {
+process vizGraph {
   tag { sample }
   publishDir "$sample", mode: 'copy'
   container "quay.io/biocontainers/odgi:v0.3--py37h8b12597_0"
