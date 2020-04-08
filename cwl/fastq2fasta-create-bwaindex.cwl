@@ -2,6 +2,9 @@ cwlVersion: v1.1
 class: Workflow
 requirements:
   SubworkflowFeatureRequirement: {}
+hints:
+  ResourceRequirement:
+    ramMin: 3000
 
 inputs:
   ref_fasta:
