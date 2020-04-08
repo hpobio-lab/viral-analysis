@@ -2,3 +2,7 @@
 .make_tags
 *.gz
 ignore/
+*.fq
+*.fastq
+*.fq.gz
+*.fastq.gz
