@@ -9,8 +9,7 @@ arguments:
   - --bam
   - $(inputs.bam)
   # - --region=$(inputs.contig):1-$(inputs.contig_end)
-  - --max-coverage
-  - $(inputs.max_coverage)
+  - --ploidy 1
   - -f
   - $(inputs.ref_fasta)
 inputs:
@@ -20,9 +19,6 @@ inputs:
   #   type: string
   # - id: contig_end
   #   type: int
-  - id: max_coverage
-    type: int
-    default: 200
   - id: ref_fasta
     type: File
 outputs:

@@ -23,9 +23,6 @@ inputs:
   threads:
     type: int
     default: 4
-  freebayes_max_coverage:
-    type: int
-    default: 200
 
 outputs:
   out_fasta:
@@ -63,6 +60,5 @@ steps:
       bam: samtools-sort/sorted_bam
       fasta: ref_fasta
       threads: threads
-      freebayes_max_coverage: freebayes_max_coverage
     out: [out_fasta]
     run: bam2fasta.cwl

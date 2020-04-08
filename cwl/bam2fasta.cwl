@@ -15,9 +15,6 @@ inputs:
   threads:
     type: int
     default: 4
-  freebayes_max_coverage:
-    type: int
-    default: 200
 
 outputs:
   out_fasta:
@@ -29,7 +26,6 @@ steps:
     in:
       bam: bam
       ref_fasta: fasta
-      max_coverage: freebayes_max_coverage
     out: [vcf]
     run: freebayes.cwl
   bcftools_view_exclude_ref:
