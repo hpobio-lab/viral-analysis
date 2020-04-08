@@ -12,7 +12,7 @@ requirements:
 baseCommand: bcftools
 arguments:
   - consensus
-  - -i'QUAL>1 && (GT="AA" || GT="Aa")'
+  - -i'QUAL > 1 && GT="A"'
   - -Hla
   - -f
   - $(inputs.ref_fasta)
