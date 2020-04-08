@@ -10,16 +10,13 @@ inputs:
     type: File?
   ref_fasta:
     type: File
-  amb:
-    type: File
-  ann:
-    type: File
-  bwt:
-    type: File
-  pac:
-    type: File
-  sa:
-    type: File
+    secondaryFiles:
+      - .amb
+      - .ann
+      - .bwt
+      - .pac
+      - .sa
+      - .fai
   threads:
     type: int
     default: 4
@@ -36,11 +33,6 @@ steps:
       fastq_forward: fastq_forward
       fastq_reverse: fastq_reverse
       index_base: ref_fasta
-      amb: amb
-      ann: ann
-      bwt: bwt
-      pac: pac
-      sa: sa
     out: [output]
     run: bwa-mem.cwl
   samtools-view:

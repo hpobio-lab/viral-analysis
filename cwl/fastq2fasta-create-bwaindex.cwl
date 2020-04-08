@@ -17,43 +17,22 @@ inputs:
 outputs:
   out_fasta:
     type: File
-    outputSource: bam2fasta/out_fasta
+    outputSource: fastq2fasta/out_fasta
 
 steps:
   bwa-index:
-    in:
-      input_fasta: ref_fasta
-    out: [amb, ann, bwt, pac, sa]
+    in: {input_fasta: ref_fasta}
+    out: [indexed_fasta]
     run: bwa-index.cwl
-  bwa-mem:
+  samtools-faidx:
+    in: {input_fasta: bwa-index/indexed_fasta}
+    out: [indexed_fasta]
+    run: samtools-faidx.cwl
+  fastq2fasta:
     in:
-      threads: threads
       fastq_forward: fastq_forward
       fastq_reverse: fastq_reverse
-      index_base: ref_fasta
-      amb: bwa-index/amb
-      ann: bwa-index/ann
-      bwt: bwa-index/bwt
-      pac: bwa-index/pac
-      sa: bwa-index/sa
-    out: [output]
-    run: bwa-mem.cwl
-  samtools-view:
-    in:
-      threads: threads
-      input_file: bwa-mem/output
-    out: [bam]
-    run: samtools-view.cwl
-  samtools-sort:
-    in:
-      input_bamfile: samtools-view/bam
-      threads: threads
-    out: [sorted_bam]
-    run: samtools-sort.cwl
-  bam2fasta:
-    in:
-      bam: samtools-sort/sorted_bam
-      fasta: ref_fasta
+      ref_fasta: samtools-faidx/indexed_fasta
       threads: threads
     out: [out_fasta]
-    run: bam2fasta.cwl
+    run: fastq2fasta.cwl

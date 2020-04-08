@@ -16,26 +16,16 @@ inputs:
     inputBinding:
       position: 1
 outputs:
-  amb:
+  indexed_fasta:
     type: File
     outputBinding:
-      glob: $(inputs.input_fasta.basename).amb
-  ann:
-    type: File
-    outputBinding:
-      glob: $(inputs.input_fasta.basename).ann
-  bwt:
-    type: File
-    outputBinding:
-      glob: $(inputs.input_fasta.basename).bwt
-  pac:
-    type: File
-    outputBinding:
-      glob: $(inputs.input_fasta.basename).pac
-  sa:
-    type: File
-    outputBinding:
-      glob: $(inputs.input_fasta.basename).sa
+      glob: $(inputs.input_fasta.basename)
+    secondaryFiles:
+      - .amb
+      - .ann
+      - .bwt
+      - .pac
+      - .sa
   stdout: stdout
   stderr: stderr
 stdout: bwa-index-stdout.log

@@ -4,11 +4,6 @@ cwlVersion: v1.1
 hints:
   DockerRequirement:
     dockerPull: "quay.io/biocontainers/bcftools:1.10.2--hd2cd319_0"
-requirements:
-  InitialWorkDirRequirement:
-    listing:
-      - $(inputs.bcf)
-      - $(inputs.bcf_index)
 baseCommand: bcftools
 arguments:
   - view
@@ -22,8 +17,7 @@ inputs:
     type: int
   - id: bcf
     type: File
-  - id: bcf_index
-    type: File
+    secondaryFiles: [.csi]
 outputs:
   - id: vcf
     type: stdout

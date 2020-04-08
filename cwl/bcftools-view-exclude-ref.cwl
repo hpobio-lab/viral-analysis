@@ -20,4 +20,4 @@ inputs:
 outputs:
   - id: bcf
     type: stdout
-stdout: $(inputs.bcf.nameroot).without-ref.bcf
+stdout: $(inputs.vcf.nameroot).without-ref.bcf
