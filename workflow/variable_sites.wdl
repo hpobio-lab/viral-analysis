@@ -4,16 +4,27 @@ task filterViralReads{
   input{
     File refFA
     File readsFA
-    File? readPairFA
+    Int diskGB
+    Int? kmerSize = 16
+    Int? sketchSize = 10000
+    Int? threshold = 50
+    #File? readPairFA
+    Int? threads = 4
+   
+    String outbase = basename(basename(readsFA, ".fasta"), ".fa")
   }
   command{
-
+    rkmh stream -t ${threads} -r ${refFA} -f ${readsFA} -k 16 -s 5000 | \
+    awk '{ if($3 >= ${threshold}) { print }}' | cut -f 2 > reads.lst && \
+    seqtk ${readsFA} reads.lst > ${outbase}.filtered.fa
   }
   runtime{
-
+    docker : "hpobiolab/rkmh"
+    cpu : threads
+    memory : "12GB"
   }
   output{
-
+    File filteredReads = "${outbase}.filtered.fa"
   }
 }
 
@@ -36,7 +47,7 @@ task bwaMem{
     }
     command{
       bwa mem -t ${bwaThreads} ${ref} ${reads} | \
-        samtools -T tmp -O bam -m 2G -@ ${samtoolsThreads} > ${outbase}.sorted.bam
+        samtools sort -T tmp -O bam -m 2G -@ ${samtoolsThreads} > ${outbase}.sorted.bam
     }
     runtime{
       docker : "erictdawson/bwa"
@@ -47,6 +58,26 @@ task bwaMem{
     output{
       File mappedBam = "${outbase}.sorted.bam"
     }
+}
+
+task freebayesCall{
+  input{
+    File refFA
+    File readsBAM
+    String outbase = basename(readsBam, ".bam")
+  }
+  command {
+    freebayes --pooled-continuous --ploidy 1 --bam ${readsBAM} -f ${refFA} > ${outbase}.vcf
+  }
+  runtime {
+    docker : "quay.io/biocontainers/freebayes:1.3.2--py27hc088bd4_0"
+    cpu : 2
+    memory : "13GB"
+  }
+  output{
+    File freebayesVCF = "${outbase}.vcf"
+  }
+
 }
 
 task samtoolsMpileup{
@@ -71,28 +102,13 @@ task samtoolsMpileup{
   }
 }
 
-task samtoolsCall{
-input{
-
-  }
-  command{
-
-  }
-  runtime{
-
-  }
-  output{
-
-  }
-}
-
 task translate{
-input{
+  input{
     File readsVARS
     File refGTF
   }
   command{
-
+    echo
   }
   runtime{
 
@@ -103,11 +119,11 @@ input{
 }
 
 task plotVariableSites{
-input{
+  input{
 
   }
   command{
-
+    echo 
   }
   runtime{
     docker : "rocker/tidyverse"
@@ -120,6 +136,39 @@ input{
   }
 }
 
-workflow findVariableSites{
+task gffToTidy{
+  input{
 
+  }
+  command{
+
+  }
+  runtime{
+
+  }
+  output{
+
+  }
+}
+
+workflow findVariableSites{
+  input{
+    File refFA
+    File refFAI
+    File refGFF
+    File readsFA
+
+    File bwaSA
+    File bwaSAI
+    File bwaPAC
+    File bwaANN
+    File bwaAMB
+
+    Int? bwaThreads
+    Int? samtoolsThreads
+    Int? rkmhThreads
+    Int? rkmhSimilarityThreshold
+    Int? rkmhKmerSize
+    Int? rkmhSketchSize
+  }
 }
