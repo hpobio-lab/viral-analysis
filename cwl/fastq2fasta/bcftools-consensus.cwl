@@ -21,4 +21,4 @@ inputs:
 outputs:
   - id: out_fasta
     type: stdout
-stdout: out.fasta
+stdout: sequence.fasta
