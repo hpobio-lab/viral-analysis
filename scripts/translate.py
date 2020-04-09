@@ -99,7 +99,7 @@ if __name__ == "__main__":
                 if not line.startswith("#"):
                     line = line.strip()
                     tokens = line.split("\t")
-                    v = (tokens[0], int(tokens[1]), tokens[3], tokens[4])
+                    v = (tokens[0], int(tokens[1]) - 1, tokens[3], tokens[4])
                     if gff_features.overlaps(v[1]):
                         feats = gff_features.at(v[1])
                         for feat in feats:
@@ -116,7 +116,7 @@ if __name__ == "__main__":
                             if feat_id not in feature_peptide_cache:
                                 feature_peptide_cache[feat_id] = translate_seq(seq)
                             aa_seq = feature_peptide_cache[feat_id]
-                            print("Located CDS variant. Translating.", feat_id, "codon:", codon_number, "base", codon_base, v, file=sys.stderr)
+                            print("Located CDS variant. Translating.", feat_id, "codon:", codon_number, "base(1-based):", codon_base+1, v, file=sys.stderr)
                             translate_variant_site(seq, v[1], v[3], feat_strand, feat_phase)
 
                     else:

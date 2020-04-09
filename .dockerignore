@@ -1,8 +1,11 @@
 cromwell/
 dockerfiles/
 workflows/
+cwl/
 data/
 ref/
+bin/
+ignore/
 *.jar
 *.md
 *.wdl
@@ -14,3 +17,5 @@ ref/
 *.fastq
 *.conf
 *.gz
+*.sam
+*.bam
