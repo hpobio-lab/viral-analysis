@@ -44,24 +44,22 @@ steps:
   bcftools_index_after_normalization:
     in:
       bcf: bcftools_norm/normalized_bcf
-    out: [index]
+    out: [indexed]
     run: bcftools-index.cwl
   bcftools_view_qc:
     in:
-      bcf: bcftools_norm/normalized_bcf
-      bcf_index: bcftools_index_after_normalization/index
+      bcf: bcftools_index_after_normalization/indexed
       threads: threads
     out: [vcf]
     run: bcftools-view-qc.cwl
   bcftools_index_after_qc:
     in:
       bcf: bcftools_view_qc/vcf
-    out: [index]
+    out: [indexed]
     run: bcftools-index.cwl
   bcftools_consensus:
     in:
       ref_fasta: fasta
-      vcf: bcftools_view_qc/vcf
-      vcf_index: bcftools_index_after_qc/index
+      vcf: bcftools_index_after_qc/indexed
     out: [out_fasta]
     run: bcftools-consensus.cwl

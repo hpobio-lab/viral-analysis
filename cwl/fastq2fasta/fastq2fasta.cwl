@@ -2,32 +2,34 @@ cwlVersion: v1.1
 class: Workflow
 requirements:
   SubworkflowFeatureRequirement: {}
+hints:
+  ResourceRequirement:
+    ramMin: 3000
 
 inputs:
-  fastq_forward:
-    type: File
-  fastq_reverse:
-    type: File?
+  fastq_forward: File
+  fastq_reverse: File?
   ref_fasta:
     type: File
-  amb:
-    type: File
-  ann:
-    type: File
-  bwt:
-    type: File
-  pac:
-    type: File
-  sa:
-    type: File
+    secondaryFiles:
+      - .amb
+      - .ann
+      - .bwt
+      - .pac
+      - .sa
+      - .fai
   threads:
     type: int
     default: 4
+  metadata: File?
 
 outputs:
   out_fasta:
     type: File
     outputSource: bam2fasta/out_fasta
+  out_metadata:
+    type: File?
+    outputSource: metadata
 
 steps:
   bwa-mem:
@@ -36,11 +38,6 @@ steps:
       fastq_forward: fastq_forward
       fastq_reverse: fastq_reverse
       index_base: ref_fasta
-      amb: amb
-      ann: ann
-      bwt: bwt
-      pac: pac
-      sa: sa
     out: [output]
     run: bwa-mem.cwl
   samtools-view:
