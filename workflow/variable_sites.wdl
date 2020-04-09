@@ -30,7 +30,7 @@ task rkmhFilter{
       ~{"-m " + threshold} > ${outbase}.filtered.fa
   }
   runtime{
-    docker : "hpobiolab/rkmh2"
+    docker : "hpobiolab/rkmh2-ivybridge"
     cpu : threads
     memory : "12GB"
   }
@@ -58,7 +58,7 @@ task bwaMem{
     }
     command{
       bwa mem -t ${bwaThreads} ${refFA} ${reads} | \
-        samtools sort -T tmp -O bam -m 2G -@ ${samtoolsThreads} > ${outbase}.sorted.bam
+        samtools sort -T tmp -O bam -m 1G -@ ${samtoolsThreads} > ${outbase}.sorted.bam
     }
     runtime{
       docker : "erictdawson/bwa"
@@ -74,6 +74,7 @@ task bwaMem{
 task freebayesCall{
   input{
     File refFA
+    File refFAI
     File readsBAM
     String outbase = basename(readsBAM, ".bam")
   }
@@ -173,6 +174,7 @@ workflow findVariableSites{
     File bwaPAC
     File bwaANN
     File bwaAMB
+    File bwaBWT
 
     Int? bwaThreads
     Int? samtoolsThreads
@@ -181,7 +183,7 @@ workflow findVariableSites{
     Int? rkmhKmerSize
     Int? rkmhSketchSize
 
-    Int rkmhDiskGB = ceil(size(refFA, "gb") + (2 * size(readsFA, "gb")))
+    Int rkmhDiskGB = ceil(size(refFA, "GB") + (2 * size(readsFA, "GB")))
   }
 
   call rkmhFilter{
@@ -204,16 +206,14 @@ workflow findVariableSites{
       refSA=bwaSA,
       refPAC=bwaPAC,
       refANN=bwaANN,
-      refAMB=bwaAMB
+      refAMB=bwaAMB,
+      refBWT=bwaBWT
 
   }
   call freebayesCall{
-
-  }
-  call translate{
-
-  }
-  call plotVariableSites{
-
+      input:
+        refFA=refFA,
+        refFAI=refFAI,
+        readsBAM=bwaMem.mappedBam
   }
 }

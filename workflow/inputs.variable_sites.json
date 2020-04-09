@@ -1,0 +1,20 @@
+{
+    "findVariableSites.bwaAMB": "ref/SARS-CoV2-NC_045512.2.fasta.amb",
+    "findVariableSites.bwaANN": "ref/SARS-CoV2-NC_045512.2.fasta.ann",
+    "findVariableSites.bwaPAC": "ref/SARS-CoV2-NC_045512.2.fasta.pac",
+    "findVariableSites.bwaSA": "ref/SARS-CoV2-NC_045512.2.fasta.sa",
+    "findVariableSites.bwaBWT": "ref/SARS-CoV2-NC_045512.2.fasta.bwt",
+    "findVariableSites.refFA": "ref/SARS-CoV2-NC_045512.2.fasta",
+    "findVariableSites.refFAI": "ref/SARS-CoV2-NC_045512.2.fasta.fai",
+    "findVariableSites.readsFA": "data/sample1.extract.fastq.gz",
+    "findVariableSites.refGFF": "ref/GCF_009858895.2_ASM985889v3_genomic.gff",
+    "findVariableSites.bwaThreads": 12,
+    "findVariableSites.rkmhFilter.minLength": 50,
+    "findVariableSites.rkmhFilter.readBatch": 10000,
+    "findVariableSites.rkmhFilter.refBatch": 50,
+    "findVariableSites.rkmhKmerSize": 16,
+    "findVariableSites.rkmhSketchSize": 30000,
+    "findVariableSites.rkmhThreads": 8,
+    "findVariableSites.rkmhThreshold": 15,
+    "findVariableSites.samtoolsThreads": 8
+}
