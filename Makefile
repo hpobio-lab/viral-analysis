@@ -43,4 +43,4 @@ base: base/base.Dockerfile
 clean:
 	$(RM) make_tags
 
-.PHONY: build push clean
+.PHONY: build push clean quay
