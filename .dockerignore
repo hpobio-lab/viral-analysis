@@ -13,3 +13,4 @@ ref/
 *.gff
 *.fastq
 *.conf
+*.gz
