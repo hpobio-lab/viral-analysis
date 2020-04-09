@@ -12,6 +12,9 @@ outputs:
   seqwishGFA:
     type: File
     outputSource: induceGraph/seqwishGFA
+  odgiRDF:
+    type: File
+    outputSource: odgi2rdf/rdf
 steps:
   dedup:
     in: {readsFA: inputReads}
@@ -35,3 +38,7 @@ steps:
     in: {inputODGI: buildGraph/odgiGraph}
     out: [odgiPNG]
     run: odgi-viz.cwl
+  odgi2rdf:
+    in: {odgi: buildGraph/odgiGraph}
+    out: [rdf]
+    run: odgi_to_rdf.cwl
