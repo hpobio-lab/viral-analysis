@@ -6,6 +6,21 @@ import argparse
 import pyfaidx
 from math import floor
 
+"""
+Reads in a FASTA reference,
+a VCF containing isolate variants,
+and a tidied-GFF file
+and returns a new file with four columns:
+SEQ_ID  POS  BASE  MOLECULE FEATURE
+
+where SEQ_ID is the FASTA identifier of the sequence the variant is in,
+POS is the 1-based position, BASE is the DNA base or amino acid at that location,
+MOLECULE is one of "DNA" or "PROTEIN",
+and FEATURE is the GFF feature that the variant falls within (if any)
+"""
+
+
+
 base_complement = {'A': 'T', 'C': 'G', 'G': 'C', 'T': 'A'}
 
 codon_to_AA = defaultdict(str, { 
@@ -46,12 +61,22 @@ Takes the reference sequence, the position within it, the ref / alt alleles,
 the peptide name, the codon number within the protein, and the frame (a number between 0-2 indicating
 where within the codon we are) and returns the modified amino acid.
 """
-def translate_variant_site(seq, position, alt, strand, phase):
+def translate_variant_site(seq, position, alt, strand, phase, feature_name):
     if strand == "-":
         print("Reverse-complementing seq to match - strand", file=sys.stderr)
         seq = "".join([base_complement[i] for i in seq[::-1]])
 
     return
+
+def tidy_dna_site(seq_id, position, ref, alt, feature_name):
+    MOL = "DNA"
+    if len(ref) > len(alt):
+        alt = "DEL"
+    elif len(alt) > len(ref):
+        alt = "INS"
+    
+    return "\t".join([seq_id, str(position), alt, MOL, feature_name])
+
 
 def translate_seq(seq):
     pep = []
@@ -91,7 +116,8 @@ if __name__ == "__main__":
                     tokens[4] = int(tokens[4])
                     tokens[6] = int(tokens[6])
                     gff_features.addi(tokens[3], tokens[4], tuple(tokens))
-
+    header = "SEQID\tpos\tbase\tmolecule\tfeature"
+    print(header)
     if args.variants is not None:
         variant_list = []
         with open(args.variants, "r") as ifi:
@@ -99,6 +125,9 @@ if __name__ == "__main__":
                 if not line.startswith("#"):
                     line = line.strip()
                     tokens = line.split("\t")
+                    """
+                    A 4-tuple, containing the SEQID, POS, REF and ALT fields.
+                    """
                     v = (tokens[0], int(tokens[1]), tokens[3], tokens[4])
                     if gff_features.overlaps(v[1]):
                         feats = gff_features.at(v[1])
@@ -106,6 +135,7 @@ if __name__ == "__main__":
                             feat_data = feat.data
                             feat_id = "_".join([str(s) for s in feat_data])
                             feat_ref = feat_data[0]
+                            gene_name = feat_data[2]
                             feat_start = feat_data[3]
                             feat_end = feat_data[4]
                             feat_strand = feat_data[5]
@@ -117,8 +147,10 @@ if __name__ == "__main__":
                                 feature_peptide_cache[feat_id] = translate_seq(seq)
                             aa_seq = feature_peptide_cache[feat_id]
                             print("Located CDS variant. Translating.", feat_id, "codon:", codon_number, "base", codon_base, v, file=sys.stderr)
-                            translate_variant_site(seq, v[1], v[3], feat_strand, feat_phase)
+                            print(tidy_dna_site(v[0], v[1], v[2], v[3], gene_name))
+                            #translate_variant_site(seq, v[1], v[3], feat_strand, feat_phase)
 
                     else:
+                        print(tidy_dna_site(v[0], v[1], v[2], v[3], "NA"))
                         print("Non-coding var", v, file=sys.stderr)
 
