@@ -1,25 +1,36 @@
 version 1.0
 
-task filterViralReads{
+task rkmhFilter{
   input{
     File refFA
     File readsFA
     Int diskGB
     Int? kmerSize = 16
     Int? sketchSize = 10000
-    Int? threshold = 50
+    Int? readBatch = 4000
+    Int? refBatch = 5
+    Int? minLength = 50
+    Int? threshold = 25
     #File? readPairFA
     Int? threads = 4
    
     String outbase = basename(basename(readsFA, ".fasta"), ".fa")
   }
   command{
-    rkmh stream -t ${threads} -r ${refFA} -f ${readsFA} -k 16 -s 5000 | \
-    awk '{ if($3 >= ${threshold}) { print }}' | cut -f 2 > reads.lst && \
-    seqtk ${readsFA} reads.lst > ${outbase}.filtered.fa
+    rkmh2 filter -t ${threads} \
+      -r ~{refFA} \
+      -f ~{readsFA} \
+      -t ~{threads} \
+      ~{"-R " + refBatch} \
+      ~{"-F " + readBatch} \
+      ~{"-k " + kmerSize} \
+      -t ~{threads} \
+      ~{"-l " + minLength} \
+      ~{"-s " + sketchSize} \
+      ~{"-m " + threshold} > ${outbase}.filtered.fa
   }
   runtime{
-    docker : "hpobiolab/rkmh"
+    docker : "hpobiolab/rkmh2"
     cpu : threads
     memory : "12GB"
   }
@@ -32,13 +43,13 @@ task filterViralReads{
 task bwaMem{
     input{
         File reads
-        File ref
+        File refFA
+        File refFAI
         File refSA
         File refBWT
         File refPAC
         File refAMB
         File refANN
-        File refFAI
         #Boolean paired
         Int? bwaThreads = 20
         Int? samtoolsThreads = 10
@@ -46,7 +57,7 @@ task bwaMem{
         Int totalThreads = bwaThreads + samtoolsThreads
     }
     command{
-      bwa mem -t ${bwaThreads} ${ref} ${reads} | \
+      bwa mem -t ${bwaThreads} ${refFA} ${reads} | \
         samtools sort -T tmp -O bam -m 2G -@ ${samtoolsThreads} > ${outbase}.sorted.bam
     }
     runtime{
@@ -64,7 +75,7 @@ task freebayesCall{
   input{
     File refFA
     File readsBAM
-    String outbase = basename(readsBam, ".bam")
+    String outbase = basename(readsBAM, ".bam")
   }
   command {
     freebayes --pooled-continuous --ploidy 1 --bam ${readsBAM} -f ${refFA} > ${outbase}.vcf
@@ -159,7 +170,6 @@ workflow findVariableSites{
     File readsFA
 
     File bwaSA
-    File bwaSAI
     File bwaPAC
     File bwaANN
     File bwaAMB
@@ -167,8 +177,43 @@ workflow findVariableSites{
     Int? bwaThreads
     Int? samtoolsThreads
     Int? rkmhThreads
-    Int? rkmhSimilarityThreshold
+    Int? rkmhThreshold
     Int? rkmhKmerSize
     Int? rkmhSketchSize
+
+    Int rkmhDiskGB = ceil(size(refFA, "gb") + (2 * size(readsFA, "gb")))
+  }
+
+  call rkmhFilter{
+    input:
+      refFA=refFA,
+      readsFA=readsFA,
+      threads=rkmhThreads,
+      diskGB=rkmhDiskGB
+  }
+
+  #call gff_to_tidy{
+    
+  #}
+
+  call bwaMem{
+    input:
+      reads=rkmhFilter.filteredReads,
+      refFA=refFA,
+      refFAI=refFAI,
+      refSA=bwaSA,
+      refPAC=bwaPAC,
+      refANN=bwaANN,
+      refAMB=bwaAMB
+
+  }
+  call freebayesCall{
+
+  }
+  call translate{
+
+  }
+  call plotVariableSites{
+
   }
 }
