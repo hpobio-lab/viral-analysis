@@ -2,6 +2,9 @@ cwlVersion: v1.1
 class: Workflow
 inputs:
   inputReads: File[]
+  metadata: File[]
+  metadataSchema: File
+  subjects: string[]
 outputs:
   odgiGraph:
     type: File
@@ -15,6 +18,9 @@ outputs:
   odgiRDF:
     type: File
     outputSource: odgi2rdf/rdf
+  mergedMetadata:
+    type: File
+    outputSource: mergeMetadata/merged
 steps:
   dedup:
     in: {readsFA: inputReads}
@@ -42,3 +48,10 @@ steps:
     in: {odgi: buildGraph/odgiGraph}
     out: [rdf]
     run: odgi_to_rdf.cwl
+  mergeMetadata:
+    in:
+      metadata: metadata
+      metadataSchema: metadataSchema
+      subjects: subjects
+    out: [merged]
+    run: merge-metadata.cwl
