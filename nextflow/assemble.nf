@@ -53,7 +53,7 @@ process overlapReads {
 process induceGraph {
   tag { sample }
   publishDir "$sample", mode: 'copy'
-  container "quay.io/biocontainers/seqwish:0.2.1--h8b12597_0"
+  container "quay.io/biocontainers/seqwish:0.4.1--h8b12597_0"
 
   input:
     set sample, file(fasta), file(alignment) from alignments
