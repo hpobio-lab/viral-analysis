@@ -151,6 +151,6 @@ if __name__ == "__main__":
                             #translate_variant_site(seq, v[1], v[3], feat_strand, feat_phase)
 
                     else:
-                        print(tidy_dna_site(v[0], v[1], v[2], v[3], "NA"))
+                        print(tidy_dna_site(v[0], v[1], v[2], v[3], "Noncoding"))
                         print("Non-coding var", v, file=sys.stderr)
 
