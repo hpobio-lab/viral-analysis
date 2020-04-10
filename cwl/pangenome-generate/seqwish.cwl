@@ -15,7 +15,7 @@ requirements:
   InlineJavascriptRequirement: {}
 hints:
   DockerRequirement:
-    dockerPull: "quay.io/biocontainers/seqwish:0.2.1--h8b12597_0"
+    dockerPull: "quay.io/biocontainers/seqwish:0.4.1--h8b12597_0"
   ResourceRequirement:
     coresMin: 4
     ramMin: $(7 * 1024)
