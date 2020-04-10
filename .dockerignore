@@ -3,6 +3,8 @@ dockerfiles/
 workflows/
 data/
 ref/
+bin/
+ignore/
 *.jar
 *.md
 *.wdl
@@ -13,3 +15,6 @@ ref/
 *.gff
 *.fastq
 *.conf
+*.bam
+*.gz
+*.sam
