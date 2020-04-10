@@ -3,18 +3,18 @@ version 1.0
 task rkmhFilter{
   input{
     File refFA
-    File readsFA
-    Int diskGB
-    Int? kmerSize = 16
-    Int? sketchSize = 10000
-    Int? readBatch = 4000
-    Int? refBatch = 5
-    Int? minLength = 50
-    Int? threshold = 25
-    #File? readPairFA
-    Int? threads = 4
-   
-    String outbase = basename(basename(readsFA, ".fasta"), ".fa")
+      File readsFA
+      Int diskGB
+      Int? kmerSize = 16
+      Int? sketchSize = 10000
+      Int? readBatch = 4000
+      Int? refBatch = 5
+      Int? minLength = 50
+      Int? threshold = 25
+#File? readPairFA
+      Int? threads = 4
+
+      String outbase = basename(basename(readsFA, ".fasta"), ".fa")
   }
   command{
     rkmh2 filter -t ${threads} \
@@ -30,9 +30,9 @@ task rkmhFilter{
       ~{"-m " + threshold} > ${outbase}.filtered.fa
   }
   runtime{
-    docker : "hpobiolab/rkmh2-ivybridge"
-    cpu : threads
-    memory : "12GB"
+docker : "hpobiolab/rkmh2-ivybridge"
+           cpu : threads
+           memory : "12GB"
   }
   output{
     File filteredReads = "${outbase}.filtered.fa"
@@ -41,50 +41,50 @@ task rkmhFilter{
 
 
 task bwaMem{
-    input{
-        File reads
-        File refFA
-        File refFAI
-        File refSA
-        File refBWT
-        File refPAC
-        File refAMB
-        File refANN
-        #Boolean paired
-        Int? bwaThreads = 20
-        Int? samtoolsThreads = 10
-        String outbase = basename(reads, ".bam")
-        Int totalThreads = bwaThreads + samtoolsThreads
-    }
-    command{
-      bwa mem -t ${bwaThreads} ${refFA} ${reads} | \
-        samtools sort -T tmp -O bam -m 1G -@ ${samtoolsThreads} > ${outbase}.sorted.bam
-    }
-    runtime{
-      docker : "erictdawson/bwa"
-      memory : "38GB"
-      cpu : totalThreads
-      preemptible : 2
-    }
-    output{
-      File mappedBam = "${outbase}.sorted.bam"
-    }
+  input{
+    File reads
+      File refFA
+      File refFAI
+      File refSA
+      File refBWT
+      File refPAC
+      File refAMB
+      File refANN
+#Boolean paired
+      Int? bwaThreads = 20
+      Int? samtoolsThreads = 10
+      String outbase = basename(reads, ".bam")
+      Int totalThreads = bwaThreads + samtoolsThreads
+  }
+  command{
+    bwa mem -t ${bwaThreads} ${refFA} ${reads} | \
+      samtools sort -T tmp -O bam -m 1G -@ ${samtoolsThreads} > ${outbase}.sorted.bam
+  }
+  runtime{
+docker : "erictdawson/bwa"
+           memory : "38GB"
+           cpu : totalThreads
+           preemptible : 2
+  }
+  output{
+    File mappedBam = "${outbase}.sorted.bam"
+  }
 }
 
 task freebayesCall{
   input{
     File refFA
-    File refFAI
-    File readsBAM
-    String outbase = basename(readsBAM, ".bam")
+      File refFAI
+      File readsBAM
+      String outbase = basename(readsBAM, ".bam")
   }
   command {
     freebayes --pooled-continuous --ploidy 1 --bam ${readsBAM} -f ${refFA} > ${outbase}.vcf
   }
   runtime {
-    docker : "quay.io/biocontainers/freebayes:1.3.2--py27hc088bd4_0"
-    cpu : 2
-    memory : "13GB"
+docker : "quay.io/biocontainers/freebayes:1.3.2--py27hc088bd4_0"
+           cpu : 2
+           memory : "13GB"
   }
   output{
     File freebayesVCF = "${outbase}.vcf"
@@ -95,19 +95,19 @@ task freebayesCall{
 task samtoolsMpileup{
   input{
     File refFA
-    File readsBAM
-    Int? preemptAttempts = 2
+      File readsBAM
+      Int? preemptAttempts = 2
 
-    String outbase = basename(readsBAM, ".bam")
+      String outbase = basename(readsBAM, ".bam")
   }
   command{
     samtools mpileup --output-QNAME ${refFA} ${readsBAM} > ${outbase}.mpileup
   }
   runtime{
-    docker : "erictdawson/samtools"
-    cpu : 2
-    memory : "7GB"
-    preemptible : preemptAttempts
+docker : "erictdawson/samtools"
+           cpu : 2
+           memory : "7GB"
+           preemptible : preemptAttempts
   }
   output{
     File readsPileup = "${outbase}.mpileup"
@@ -116,41 +116,54 @@ task samtoolsMpileup{
 
 task translate{
   input{
-    File readsVARS
-    File refGTF
-  }
-  command{
-    echo
-  }
-  runtime{
+    File readsVars
+      File refTidyGFF
+      File refFA
+      File refFAI
 
+  }
+
+  String outbase = basename(readsVars, ".vcf")
+    command{
+      python3 /usr/bin/translate.py -g ~{refTidyGFF} -r ~{refFA} -i ~{readsVars} > ~{outbase}.tidytranslate.tsv
+    }
+  runtime {
+    docker : "hpobiolab/variable-sites-translate"
+    cpu : 1
+    memory : "1GB"
+    preemptible : 2
   }
   output{
-
+    File tidyTranslatedVars = "~{outbase}.tidytranslate.tsv"
   }
 }
 
+
 task plotVariableSites{
   input{
-
+    File tidyVars
   }
-  command{
-    echo 
-  }
+  String outbase = basename(tidyVars, ".tsv")
+    command{
+      Rscript --vanilla /usr/bin/variable_sites.R -i ~{tidyVars} -o ~{outbase}
+    }
   runtime{
-    docker : "rocker/tidyverse"
-    cpu : 1
-    memory : "7GB"
-    preemptible : 0
+        docker : "hpobiolab/variable-sites-plot"
+        cpu : 1
+        memory : "7GB"
+        preemptible : 2
   }
   output{
-
+    File perFeatureCountPlot = "~{outbase}.per_feature_count_plot.pdf"
+      File featureVarsPlot = "~{outbase}.feature_variants_plot.pdf"
+      File genomeVarsPlot = "~{outbase}.genome_variants_plot.pdf"
+#File report = "~{outbase}.report.pdf"
   }
 }
 
 task gffToTidy{
   input{
-
+    File refGFF
   }
   command{
 
@@ -163,27 +176,28 @@ task gffToTidy{
   }
 }
 
+
 workflow findVariableSites{
   input{
     File refFA
-    File refFAI
-    File refGFF
-    File readsFA
+      File refFAI
+      File refTidyGFF
+      File readsFA
 
-    File bwaSA
-    File bwaPAC
-    File bwaANN
-    File bwaAMB
-    File bwaBWT
+      File bwaSA
+      File bwaPAC
+      File bwaANN
+      File bwaAMB
+      File bwaBWT
 
-    Int? bwaThreads
-    Int? samtoolsThreads
-    Int? rkmhThreads
-    Int? rkmhThreshold
-    Int? rkmhKmerSize
-    Int? rkmhSketchSize
+      Int? bwaThreads
+      Int? samtoolsThreads
+      Int? rkmhThreads
+      Int? rkmhThreshold
+      Int? rkmhKmerSize
+      Int? rkmhSketchSize
 
-    Int rkmhDiskGB = ceil(size(refFA, "GB") + (2 * size(readsFA, "GB")))
+      Int rkmhDiskGB = ceil(size(refFA, "GB") + (2 * size(readsFA, "GB")))
   }
 
   call rkmhFilter{
@@ -194,9 +208,9 @@ workflow findVariableSites{
       diskGB=rkmhDiskGB
   }
 
-  #call gff_to_tidy{
-    
-  #}
+#call gff_to_tidy{
+
+#}
 
   call bwaMem{
     input:
@@ -211,9 +225,24 @@ workflow findVariableSites{
 
   }
   call freebayesCall{
-      input:
-        refFA=refFA,
-        refFAI=refFAI,
-        readsBAM=bwaMem.mappedBam
+    input:
+      refFA=refFA,
+      refFAI=refFAI,
+      readsBAM=bwaMem.mappedBam
   }
+
+  call translate{
+    input:
+      refFA=refFA,
+      refFAI=refFAI,
+      refTidyGFF=refTidyGFF,
+      readsVars = freebayesCall.freebayesVCF
+  }
+
+
+  call plotVariableSites{
+    input:
+      tidyVars=translate.tidyTranslatedVars
+  }
+
 }

@@ -7,7 +7,7 @@
     "findVariableSites.refFA": "ref/SARS-CoV2-NC_045512.2.fasta",
     "findVariableSites.refFAI": "ref/SARS-CoV2-NC_045512.2.fasta.fai",
     "findVariableSites.readsFA": "data/sample1.extract.fastq.gz",
-    "findVariableSites.refGFF": "ref/GCF_009858895.2_ASM985889v3_genomic.gff",
+    "findVariableSites.refTidyGFF": "ref/SARS-CoV2-NC_045512.2.tidygff.tsv",
     "findVariableSites.bwaThreads": 12,
     "findVariableSites.rkmhFilter.minLength": 50,
     "findVariableSites.rkmhFilter.readBatch": 10000,
