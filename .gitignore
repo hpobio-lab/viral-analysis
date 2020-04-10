@@ -1,5 +1,5 @@
 *.jar
-.make_tags
+.make_tags/
 *.gz
 ignore/
 *.fq

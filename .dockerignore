@@ -1,8 +1,12 @@
 cromwell/
 dockerfiles/
 workflows/
+cromwell-workflow-logs/
+cromwell-executions/
 data/
 ref/
+bin/
+ignore/
 *.jar
 *.md
 *.wdl
@@ -13,3 +17,6 @@ ref/
 *.gff
 *.fastq
 *.conf
+*.bam
+*.gz
+*.sam

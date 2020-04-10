@@ -1,0 +1,20 @@
+{
+"findVariableSites.bwaAMB": "gs://cromwell-papi-1234/sars-cov2-data/SARS-CoV2-NC_045512.2.fasta.amb",
+"findVariableSites.bwaANN": "gs://cromwell-papi-1234/sars-cov2-data/SARS-CoV2-NC_045512.2.fasta.ann",
+"findVariableSites.bwaBWT": "gs://cromwell-papi-1234/sars-cov2-data/SARS-CoV2-NC_045512.2.fasta.bwt",
+"findVariableSites.bwaPAC": "gs://cromwell-papi-1234/sars-cov2-data/SARS-CoV2-NC_045512.2.fasta.pac",
+"findVariableSites.bwaSA": "gs://cromwell-papi-1234/sars-cov2-data/SARS-CoV2-NC_045512.2.fasta.sa",
+"findVariableSites.bwaThreads": 4,
+"findVariableSites.readsFAManifest": "gs://cromwell-papi-1234/sars-cov2-data/file_list.txt",
+"findVariableSites.refFA": "gs://cromwell-papi-1234/sars-cov2-data/SARS-CoV2-NC_045512.2.fasta",
+"findVariableSites.refFAI": "gs://cromwell-papi-1234/sars-cov2-data/SARS-CoV2-NC_045512.2.fasta.fai",
+"findVariableSites.refTidyGFF": "gs://cromwell-papi-1234/sars-cov2-data/SARS-CoV2-NC_045512.2.tidygff.tsv",
+"findVariableSites.rkmhFilter.minLength": 50,
+"findVariableSites.rkmhFilter.readBatch": 4000,
+"findVariableSites.rkmhFilter.refBatch": 5,
+"findVariableSites.rkmhKmerSize": 16,
+"findVariableSites.rkmhSketchSize": 30000,
+"findVariableSites.rkmhThreads": 4,
+"findVariableSites.rkmhThreshold": 15,
+"findVariableSites.samtoolsThreads": 4
+}
