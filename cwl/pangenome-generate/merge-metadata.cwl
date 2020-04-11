@@ -1,5 +1,8 @@
 cwlVersion: v1.1
 class: CommandLineTool
+hints:
+  DockerRequirement:
+    dockerPull: commonworkflowlanguage/cwltool_module
 inputs:
   metadata: File[]
   metadataSchema: File
