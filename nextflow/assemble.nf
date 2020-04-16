@@ -70,7 +70,7 @@ process induceGraph {
 process callVariants {
   tag { sample }
   publishDir "$sample", mode: 'copy'
-  container "heuermh/vg:latest"
+  container "quay.io/biocontainers/vg:1.23.0--0"
 
   input:
     set sample, file(graph) from graphs
